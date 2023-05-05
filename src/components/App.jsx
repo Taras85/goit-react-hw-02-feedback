@@ -1,74 +1,57 @@
 import React, {Component} from 'react';
-// import Feedback from './FeedbackOptions/FeedbackOptions';
+import s from './App.module.css'
+import FeedbackOptions from './FeedbackOptions/FeedbackOptions';
+import Statistics from './Statistics/Statistics';
+import Section from './Section/Section';
+import Notification from './Notification/Notification';
 
-
-
-export class App extends Component{
-  // const Feedback = () =>{
-      state = {
-          good: 0,
-          neutral: 0,
-          bad: 0
-        }
-
-
-
-
-
-  handleGood=()=>{
-      this.setState(({good})=>({good:good+1}))
-      
+export class App extends Component {
+  state = {
+    good: 0,
+    neutral: 0,
+    bad: 0
   }
-  handleNeutral=()=>{
-      this.setState(({neutral})=>({neutral:neutral+1}))
+
+  onClickFeedback = e => {
+    const value = e.currentTarget.textContent;
+    this.setState({
+      [value]: this.state[value] + 1,
+    });
+  };
   
-  }
-  handleBad=()=>{
-      this.setState(({bad})=>({bad:bad+1}))
-  
-  }
-  countTotalFeedback = () => {
-    const { good, neutral, bad } = this.state;
-
+  countTotalFeedback() {
+    const {good, neutral, bad} = this.state
     return good + neutral + bad;
-  };
-  countFeedbackPercentage = () => {
-    const { good, neutral, bad } = this.state;
-    return Math.round(((good + neutral) / (good + neutral + bad)) * 100);
-  };
+  }
+  countPositiveFeedbackPercentage(){
+    return Math.round(((this.state.good+this.state.neutral) / this.countTotalFeedback()) * 100)
+    // .toFixed(1)
+  }
+  
 
+  render () {
+      const {good, neutral, bad} = this.state;
+      const total = this.countTotalFeedback();
+      return (
+      <div className={s.container}>
+      <Section title="Please leave feedback">
+        <FeedbackOptions 
+          options={['good', 'neutral', 'bad']} 
+          onLeaveFeedback={this.onClickFeedback}/>
+      </Section>
 
- render(){
-  return (
-    <div
-      // style={{
-      //   height: '100vh',
-      //   display: 'flex',
-      //   justifyContent: 'center',
-      //   alignItems: 'center',
-      //   fontSize: 40,
-      //   color: '#010101'
-      // }}
-    >
-      <div>
-        <h2>Please leave feedback</h2>
-        <button onClick={this.handleGood}>Good</button>
-        <button onClick={this.handleNeutral}>Neutral</button>
-        <button onClick={this.handleBad}>Bad</button>
-       
+      <Section title="Statistics">
+        {total ?
+        (<Statistics 
+          good={good} 
+          neutral={neutral} 
+          bad={bad} 
+          total={total} 
+          positivePercentage={this.countPositiveFeedbackPercentage()}/>)
+          : (<Notification message="There is no feedback"/>)
+          }
+      </Section>
       </div>
-      <div>
-        <h2>Statistics</h2>
-        <p>Good: {this.state.good}</p>
-        <p>Neutral: {this.state.neutral}</p>
-        <p>Bad: {this.state.bad}</p>
-        <p>Total: {this.countTotalFeedback()}</p>
-        <p>Bad: {this.countFeedbackPercentage()}</p>
-
-      </div>
-        
-    </div>
-  );
-
+      )
+  };
 };
-}
