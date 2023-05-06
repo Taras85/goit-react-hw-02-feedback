@@ -1,3 +1,4 @@
+
 import React, {Component} from 'react';
 import s from './App.module.css'
 import FeedbackOptions from './FeedbackOptions/FeedbackOptions';
@@ -24,19 +25,24 @@ export class App extends Component {
     return good + neutral + bad;
   }
   countPositiveFeedbackPercentage(){
-    return Math.round(((this.state.good+this.state.neutral) / this.countTotalFeedback()) * 100)
+    return Math.round(((this.state.good) / this.countTotalFeedback()) * 100)
     // .toFixed(1)
   }
   
+ 
 
   render () {
       const {good, neutral, bad} = this.state;
       const total = this.countTotalFeedback();
+   
       return (
       <div className={s.container}>
       <Section title="Please leave feedback">
+        
         <FeedbackOptions 
-          options={['good', 'neutral', 'bad']} 
+          // options={['good', 'neutral', 'bad']} 
+          options = {Object.keys(this.state)}
+                  
           onLeaveFeedback={this.onClickFeedback}/>
       </Section>
 
